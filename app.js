@@ -21,7 +21,7 @@ db.connect((err) => {
     console.log('Terhubung ke MariaDB (XAMPP)!');
 });
 
-// --- 2. CRUD DATA MASTER (Contoh: Products) ---
+// --- 2. CRUD DATA MASTER (Products) ---
 
 // [GET] Ambil semua produk
 app.get('/api/products', (req, res) => {
@@ -70,6 +70,20 @@ app.post('/api/orders', (req, res) => {
     db.query(sql, [user_id, total_amount], (err, result) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json({ status: 'success', message: 'Transaksi Berhasil', order_id: result.insertId });
+    });
+});
+
+// [GET] Ambil Riwayat Pesanan (DITAMBAHKAN AGAR TIDAK 404)
+app.get('/api/orders', (req, res) => {
+    const sql = `
+        SELECT o.order_id, o.order_date, o.total_amount, u.username 
+        FROM orders o 
+        JOIN users u ON o.user_id = u.user_id
+        ORDER BY o.order_date DESC
+    `;
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ status: 'success', data: results });
     });
 });
 
