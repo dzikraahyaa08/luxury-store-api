@@ -115,7 +115,13 @@ app.put('/api/brands/:id', (req, res) => {
 app.delete('/api/brands/:id', (req, res) => {
     const sql = 'DELETE FROM brands WHERE brand_id = ?';
     db.query(sql, [req.params.id], (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            // Error 1451: Foreign Key Constraint Fails
+            if (err.errno === 1451) {
+                return res.status(400).json({ error: 'Tidak dapat menghapus brand ini karena produknya sudah terikat dengan riwayat pesanan (order_items).' });
+            }
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ status: 'success', message: 'Brand berhasil dihapus' });
     });
 });
@@ -156,7 +162,12 @@ app.put('/api/products/:id', (req, res) => {
 app.delete('/api/products/:id', (req, res) => {
     const sql = 'DELETE FROM products WHERE product_id = ?';
     db.query(sql, [req.params.id], (err, result) => {
-        if (err) return res.status(500).json({ error: err.message });
+        if (err) {
+            if (err.errno === 1451) {
+                return res.status(400).json({ error: 'Tidak dapat menghapus produk ini karena sudah terikat dengan riwayat pesanan (order_items).' });
+            }
+            return res.status(500).json({ error: err.message });
+        }
         res.json({ status: 'success', message: 'Produk berhasil dihapus' });
     });
 });
@@ -183,7 +194,12 @@ app.post('/api/orders', (req, res) => {
         // 1. Insert ke tabel orders
         const sqlOrder = 'INSERT INTO orders (user_id, total_amount) VALUES (?, ?)';
         db.query(sqlOrder, [user_id, total_amount], (err, orderResult) => {
-            if (err) return db.rollback(() => res.status(500).json({ error: err.message }));
+            if (err) {
+                if (err.errno === 1452) {
+                    return db.rollback(() => res.status(400).json({ error: `User dengan ID ${user_id} tidak terdaftar di database. Pastikan user_id valid.` }));
+                }
+                return db.rollback(() => res.status(500).json({ error: err.message }));
+            }
 
             const order_id = orderResult.insertId;
 
@@ -233,7 +249,7 @@ app.get('/api/orders', (req, res) => {
     const sql = `
         SELECT o.order_id, o.order_date, o.total_amount, u.username 
         FROM orders o 
-        JOIN users u ON o.user_id = u.user_id
+        LEFT JOIN users u ON o.user_id = u.user_id
         ORDER BY o.order_date DESC
     `;
     db.query(sql, (err, results) => {
@@ -249,7 +265,7 @@ app.get('/api/orders/:id', (req, res) => {
     // Get Order Info
     const sqlOrder = `
         SELECT o.order_id, o.order_date, o.total_amount, u.username, u.email 
-        FROM orders o JOIN users u ON o.user_id = u.user_id WHERE o.order_id = ?
+        FROM orders o LEFT JOIN users u ON o.user_id = u.user_id WHERE o.order_id = ?
     `;
     
     db.query(sqlOrder, [orderId], (err, orderResult) => {
