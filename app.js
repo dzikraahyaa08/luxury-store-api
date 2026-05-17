@@ -21,7 +21,29 @@ db.connect((err) => {
     console.log('Terhubung ke MariaDB (XAMPP)!');
 });
 
-// --- 2. CRUD DATA MASTER (Products) ---
+
+// --- 2. CRUD DATA USER (Disesuaikan dengan struktur tabel asli) ---
+
+// [POST] Mendaftarkan user baru dari Postman
+app.post('/api/users/register', (req, res) => {
+    // Menyesuaikan kolom asli: username, email, dan membership_level (default: Silver jika tidak diisi)
+    const { username, email, membership_level } = req.body;
+    const level = membership_level || 'Silver'; 
+
+    const sql = 'INSERT INTO users (username, email, membership_level) VALUES (?, ?, ?)';
+    
+    db.query(sql, [username, email, level], (err, result) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ 
+            status: 'success', 
+            message: 'User baru berhasil didaftarkan!', 
+            user_id: result.insertId 
+        });
+    });
+});
+
+
+// --- 3. CRUD DATA MASTER (Products) ---
 
 // [GET] Ambil semua produk
 app.get('/api/products', (req, res) => {
@@ -61,7 +83,8 @@ app.delete('/api/products/:id', (req, res) => {
     });
 });
 
-// --- 3. CRUD DATA TRANSAKSIONAL (Orders) ---
+
+// --- 4. CRUD DATA TRANSAKSIONAL (Orders) ---
 
 // [POST] Buat Pesanan Baru
 app.post('/api/orders', (req, res) => {
@@ -73,7 +96,7 @@ app.post('/api/orders', (req, res) => {
     });
 });
 
-// [GET] Ambil Riwayat Pesanan (DITAMBAHKAN AGAR TIDAK 404)
+// [GET] Ambil Riwayat Pesanan
 app.get('/api/orders', (req, res) => {
     const sql = `
         SELECT o.order_id, o.order_date, o.total_amount, u.username 
@@ -87,7 +110,8 @@ app.get('/api/orders', (req, res) => {
     });
 });
 
-// --- 4. STATISTIC DATA TRANSAKSIONAL ---
+
+// --- 5. STATISTIC DATA TRANSAKSIONAL ---
 
 app.get('/api/statistics', (req, res) => {
     const sql = `
@@ -101,6 +125,7 @@ app.get('/api/statistics', (req, res) => {
         res.json({ status: 'success', statistics: results[0] });
     });
 });
+
 
 // JALANKAN SERVER
 const PORT = 3000;
