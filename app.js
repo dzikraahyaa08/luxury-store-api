@@ -2,6 +2,8 @@ const express = require('express');
 const mysql = require('mysql2');
 const bodyParser = require('body-parser');
 
+const crypto = require('crypto');
+
 const app = express();
 app.use(bodyParser.json());
 
@@ -19,7 +21,92 @@ db.connect((err) => {
         return;
     }
     console.log('Terhubung ke MariaDB (XAMPP)!');
+
+    // Create api_users table for authentication if it doesn't exist
+    const createTableQuery = `
+        CREATE TABLE IF NOT EXISTS api_users (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(50) NOT NULL UNIQUE,
+            password VARCHAR(255) NOT NULL
+        )
+    `;
+    db.query(createTableQuery, (err) => {
+        if (err) {
+            console.error('Gagal membuat tabel api_users:', err.message);
+        } else {
+            console.log('Tabel api_users siap.');
+            // Insert default admin user if not exists
+            db.query('SELECT * FROM api_users WHERE username = "admin"', (err, results) => {
+                if (!err && results.length === 0) {
+                    db.query('INSERT INTO api_users (username, password) VALUES ("admin", "admin123")', (err) => {
+                        if (!err) console.log('Default user (admin/admin123) berhasil dibuat.');
+                    });
+                }
+            });
+        }
+    });
 });
+
+
+// --- 1.5. AUTENTIKASI ---
+let activeTokens = new Map(); // Menyimpan token yang valid di memori (token -> username)
+
+// [POST] Endpoint Login
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
+    
+    if (!username || !password) {
+        return res.status(400).json({ error: 'Username dan password harus diisi' });
+    }
+
+    const sql = 'SELECT * FROM api_users WHERE username = ? AND password = ?';
+    db.query(sql, [username, password], (err, results) => {
+        if (err) return res.status(500).json({ error: err.message });
+        
+        if (results.length === 0) {
+            return res.status(401).json({ error: 'Username atau password salah' });
+        }
+        
+        // Generate random token
+        const token = crypto.randomBytes(32).toString('hex');
+        activeTokens.set(token, username);
+        
+        res.json({
+            status: 'success',
+            message: 'Login berhasil',
+            token: token
+        });
+    });
+});
+
+// Middleware Autentikasi untuk memvalidasi token
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    // Mendukung format "Bearer <token>" atau hanya "<token>"
+    let token = '';
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.split(' ')[1];
+    } else {
+        token = authHeader; // Jika dikirim tanpa Bearer
+    }
+    
+    // Bisa juga menerima dari header custom 'x-auth-token'
+    if (!token) token = req.headers['x-auth-token'];
+    
+    if (!token) {
+        return res.status(401).json({ error: 'Akses ditolak: Token autentikasi tidak disediakan' });
+    }
+    
+    if (!activeTokens.has(token)) {
+        return res.status(403).json({ error: 'Akses ditolak: Token tidak valid' });
+    }
+    
+    req.user = activeTokens.get(token);
+    next();
+};
+
+// Gunakan middleware untuk semua endpoint di bawah ini
+app.use('/api', authenticateToken);
 
 
 // --- 2. CRUD DATA USER (Disesuaikan dengan struktur tabel asli) ---

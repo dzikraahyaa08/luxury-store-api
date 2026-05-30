@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 16 Bulan Mei 2026 pada 07.03
--- Versi server: 10.4.32-MariaDB
--- Versi PHP: 8.2.12
+-- Generation Time: May 25, 2026 at 01:17 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,26 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `brands`
+-- Table structure for table `api_users`
+--
+
+CREATE TABLE `api_users` (
+  `id` int(11) NOT NULL,
+  `username` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `api_users`
+--
+
+INSERT INTO `api_users` (`id`, `username`, `password`) VALUES
+(1, 'admin', 'admin123');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `brands`
 --
 
 CREATE TABLE `brands` (
@@ -34,25 +53,25 @@ CREATE TABLE `brands` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `brands`
+-- Dumping data for table `brands`
 --
 
 INSERT INTO `brands` (`brand_id`, `brand_name`, `origin_country`) VALUES
-(1, 'Louis Vuitton', 'France/Italy'),
+(1, 'Rolex Updated', 'Switzerland'),
 (2, 'Gucci', 'Italy'),
 (3, 'Rolex', 'Switzerland'),
 (4, 'Chanel', 'France'),
 (5, 'Herm?s', 'France'),
 (6, 'Prada', 'Italy'),
-(7, 'Dior', 'France'),
 (8, 'Balenciaga', 'Spain'),
 (9, 'Armani', 'Italy'),
-(10, 'Versace', 'Italy');
+(10, 'Versace', 'Italy'),
+(12, 'Rolex', 'Switzerland');
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `orders`
+-- Table structure for table `orders`
 --
 
 CREATE TABLE `orders` (
@@ -63,11 +82,11 @@ CREATE TABLE `orders` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `orders`
+-- Dumping data for table `orders`
 --
 
 INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `total_amount`) VALUES
-(1, 1, '2026-05-08 16:30:10', 649000000.00),
+(1, NULL, '2026-05-08 16:30:10', 649000000.00),
 (2, 2, '2026-05-08 16:30:10', 35000000.00),
 (3, 3, '2026-05-08 16:30:10', 12500000.00),
 (4, 4, '2026-05-08 16:30:10', 210000000.00),
@@ -77,14 +96,18 @@ INSERT INTO `orders` (`order_id`, `user_id`, `order_date`, `total_amount`) VALUE
 (8, 8, '2026-05-08 16:30:10', 480000000.00),
 (9, 9, '2026-05-08 16:30:10', 6000000.00),
 (10, 10, '2026-05-08 16:42:25', 15000000.00),
-(11, 1, '2026-05-14 06:19:13', 50000000.00),
-(12, 1, '2026-05-14 07:11:40', 50000000.00),
-(13, 1, '2026-05-14 07:25:33', 50000000.00);
+(11, NULL, '2026-05-14 06:19:13', 50000000.00),
+(12, NULL, '2026-05-14 07:11:40', 50000000.00),
+(13, NULL, '2026-05-14 07:25:33', 50000000.00),
+(14, NULL, '2026-05-16 11:44:46', 50000000.00),
+(15, NULL, '2026-05-17 13:19:19', 50000000.00),
+(16, NULL, '2026-05-17 14:07:57', 15000000.00),
+(20, 2, '2026-05-17 14:58:46', 122000000.00);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `order_items`
+-- Table structure for table `order_items`
 --
 
 CREATE TABLE `order_items` (
@@ -96,7 +119,7 @@ CREATE TABLE `order_items` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `order_items`
+-- Dumping data for table `order_items`
 --
 
 INSERT INTO `order_items` (`item_id`, `order_id`, `product_id`, `quantity`, `subtotal`) VALUES
@@ -109,12 +132,14 @@ INSERT INTO `order_items` (`item_id`, `order_id`, `product_id`, `quantity`, `sub
 (7, 7, 16, 1, 45000000.00),
 (8, 8, 13, 1, 480000000.00),
 (17, 9, 5, 1, 50000000.00),
-(18, 10, 12, 1, 75000000.00);
+(18, 10, 12, 1, 75000000.00),
+(19, 20, 1, 1, 38000000.00),
+(20, 20, 2, 2, 84000000.00);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `products`
+-- Table structure for table `products`
 --
 
 CREATE TABLE `products` (
@@ -127,12 +152,12 @@ CREATE TABLE `products` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `products`
+-- Dumping data for table `products`
 --
 
 INSERT INTO `products` (`product_id`, `brand_id`, `name`, `model_year`, `price`, `stock`) VALUES
-(1, 1, 'LV Neverfull Updated', '2023', 38000000.00, 10),
-(2, 1, 'LV Keepall 50', '2023', 42000000.00, 3),
+(1, 1, 'LV Neverfull Updated', '2023', 38000000.00, 9),
+(2, 1, 'LV Keepall 50', '2023', 42000000.00, 1),
 (3, 1, 'LV Christopher Backpack', '2024', 60000000.00, 2),
 (4, 2, 'Gucci Marmont Bag', '2024', 28000000.00, 6),
 (5, 2, 'Gucci Ace Sneakers', '2023', 12000000.00, 10),
@@ -149,9 +174,6 @@ INSERT INTO `products` (`product_id`, `brand_id`, `name`, `model_year`, `price`,
 (16, 6, 'Prada Galleria Bag', '2023', 45000000.00, 5),
 (17, 6, 'Prada Re-Edition 2005', '2024', 28000000.00, 8),
 (18, 6, 'Prada Bucket Hat', '2023', 9500000.00, 20),
-(19, 7, 'Lady Dior Bag', '2024', 98000000.00, 3),
-(20, 7, 'Dior Saddle Bag', '2023', 65000000.00, 5),
-(21, 7, 'Dior Book Tote', '2024', 52000000.00, 6),
 (22, 8, 'Balenciaga Triple S', '2023', 17000000.00, 12),
 (23, 8, 'Balenciaga Speed Trainer', '2023', 14000000.00, 10),
 (24, 8, 'Balenciaga Hourglass Bag', '2024', 40000000.00, 4),
@@ -161,12 +183,15 @@ INSERT INTO `products` (`product_id`, `brand_id`, `name`, `model_year`, `price`,
 (28, 10, 'Versace Medusa Shades', '2024', 6000000.00, 15),
 (29, 10, 'Versace Silk Shirt', '2023', 18000000.00, 8),
 (30, 10, 'Versace Chain Reaction', '2023', 15000000.00, 7),
-(41, 1, 'LV Neverfull MM', '2023', 35000000.00, 10);
+(41, 1, 'LV Neverfull MM', '2023', 35000000.00, 10),
+(42, 1, 'LV Neverfull MM', '2023', 35000000.00, 10),
+(43, 1, 'LV Neverfull MM', '2023', 35000000.00, 10),
+(44, 1, 'LV Neverfull MM', '2023', 35000000.00, 10);
 
 -- --------------------------------------------------------
 
 --
--- Struktur dari tabel `users`
+-- Table structure for table `users`
 --
 
 CREATE TABLE `users` (
@@ -178,11 +203,10 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data untuk tabel `users`
+-- Dumping data for table `users`
 --
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `membership_level`, `created_at`) VALUES
-(1, 'sultan_jakarta', 'sultan@mail.com', 'Platinum', '2026-05-08 16:29:34'),
 (2, 'budi_luxury', 'budi@mail.com', 'Platinum', '2026-05-08 16:29:34'),
 (3, 'ani_fashion', 'ani@mail.com', 'Silver', '2026-05-08 16:29:34'),
 (4, 'rudi_collector', 'rudi@mail.com', 'Platinum', '2026-05-08 16:29:34'),
@@ -191,27 +215,36 @@ INSERT INTO `users` (`user_id`, `username`, `email`, `membership_level`, `create
 (7, 'lina_chic', 'lina@mail.com', 'Gold', '2026-05-08 16:29:34'),
 (8, 'dono_rich', 'dono@mail.com', 'Platinum', '2026-05-08 16:29:34'),
 (9, 'wati_style', 'wati@mail.com', 'Silver', '2026-05-08 16:29:34'),
-(10, 'eka_glam', 'eka@mail.com', 'Gold', '2026-05-08 16:42:03');
+(10, 'eka_glam', 'eka@mail.com', 'Gold', '2026-05-08 16:42:03'),
+(11, 'pembeli_branded', 'pembeli@mail.com', 'Silver', '2026-05-17 14:05:29'),
+(12, 'test_user', 'test@mail.com', 'Gold', '2026-05-17 14:45:21');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indeks untuk tabel `brands`
+-- Indexes for table `api_users`
+--
+ALTER TABLE `api_users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
+
+--
+-- Indexes for table `brands`
 --
 ALTER TABLE `brands`
   ADD PRIMARY KEY (`brand_id`);
 
 --
--- Indeks untuk tabel `orders`
+-- Indexes for table `orders`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`order_id`),
   ADD KEY `user_id` (`user_id`);
 
 --
--- Indeks untuk tabel `order_items`
+-- Indexes for table `order_items`
 --
 ALTER TABLE `order_items`
   ADD PRIMARY KEY (`item_id`),
@@ -219,14 +252,14 @@ ALTER TABLE `order_items`
   ADD KEY `product_id` (`product_id`);
 
 --
--- Indeks untuk tabel `products`
+-- Indexes for table `products`
 --
 ALTER TABLE `products`
   ADD PRIMARY KEY (`product_id`),
   ADD KEY `brand_id` (`brand_id`);
 
 --
--- Indeks untuk tabel `users`
+-- Indexes for table `users`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`user_id`),
@@ -234,58 +267,64 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `email` (`email`);
 
 --
--- AUTO_INCREMENT untuk tabel yang dibuang
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT untuk tabel `brands`
+-- AUTO_INCREMENT for table `api_users`
+--
+ALTER TABLE `api_users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `brands`
 --
 ALTER TABLE `brands`
-  MODIFY `brand_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `brand_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- AUTO_INCREMENT untuk tabel `orders`
+-- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
--- AUTO_INCREMENT untuk tabel `order_items`
+-- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
--- AUTO_INCREMENT untuk tabel `products`
+-- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `product_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
--- AUTO_INCREMENT untuk tabel `users`
+-- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
--- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
+-- Constraints for dumped tables
 --
 
 --
--- Ketidakleluasaan untuk tabel `orders`
+-- Constraints for table `orders`
 --
 ALTER TABLE `orders`
   ADD CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL;
 
 --
--- Ketidakleluasaan untuk tabel `order_items`
+-- Constraints for table `order_items`
 --
 ALTER TABLE `order_items`
   ADD CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `order_items_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`);
 
 --
--- Ketidakleluasaan untuk tabel `products`
+-- Constraints for table `products`
 --
 ALTER TABLE `products`
   ADD CONSTRAINT `products_ibfk_1` FOREIGN KEY (`brand_id`) REFERENCES `brands` (`brand_id`) ON DELETE CASCADE;
